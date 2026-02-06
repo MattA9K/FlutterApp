@@ -111,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 setState(() {
                   _buttonPressed = true;
+                  _counter++;
                 });
               },
               child: const Text('Press Me'),
