@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page, Hello World!'),
+      home: const MyHomePage(title: "Matt's Calculator Powered By Flutter"),
     );
   }
 }
@@ -56,14 +56,76 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   bool _buttonPressed = false;
+  String _display = '0';
+  double _storedValue = 0;
+  String _operator = '';
+  bool _shouldResetDisplay = false;
+
+  void _onNumberPressed(String number) {
+    setState(() {
+      if (_shouldResetDisplay) {
+        _display = number;
+        _shouldResetDisplay = false;
+      } else {
+        _display = _display == '0' ? number : _display + number;
+      }
+    });
+  }
+
+  void _onOperatorPressed(String op) {
+    setState(() {
+      _storedValue = double.parse(_display);
+      _operator = op;
+      _shouldResetDisplay = true;
+    });
+  }
+
+  void _onEquals() {
+    setState(() {
+      if (_operator.isNotEmpty) {
+        double secondValue = double.parse(_display);
+        double result = 0;
+
+        if (_operator == '+') {
+          result = _storedValue + secondValue;
+        } else if (_operator == '-') {
+          result = _storedValue - secondValue;
+        } else if (_operator == '*') {
+          result = _storedValue * secondValue;
+        } else if (_operator == '/') {
+          result = _storedValue / secondValue;
+        }
+
+        _display = result.toStringAsFixed(secondValue == 0 && _operator == '/' ? 0 : 0);
+        _operator = '';
+        _shouldResetDisplay = true;
+      }
+    });
+  }
+
+  void _onClear() {
+    setState(() {
+      _display = '0';
+      _storedValue = 0;
+      _operator = '';
+      _shouldResetDisplay = false;
+    });
+  }
+
+  Widget _calcButton(String label, VoidCallback onPressed) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: ElevatedButton(
+          onPressed: onPressed,
+          child: Text(label, style: const TextStyle(fontSize: 18)),
+        ),
+      ),
+    );
+  }
 
   void _incrementCounter() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
       _counter++;
     });
   }
@@ -105,6 +167,54 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: .center,
           children: [
+            // Calculator Display
+            Container(
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                _display,
+                style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              ),
+            ),
+            // Calculator Buttons
+            Row(
+              children: [
+                _calcButton('7', () => _onNumberPressed('7')),
+                _calcButton('8', () => _onNumberPressed('8')),
+                _calcButton('9', () => _onNumberPressed('9')),
+                _calcButton('/', () => _onOperatorPressed('/')),
+              ],
+            ),
+            Row(
+              children: [
+                _calcButton('4', () => _onNumberPressed('4')),
+                _calcButton('5', () => _onNumberPressed('5')),
+                _calcButton('6', () => _onNumberPressed('6')),
+                _calcButton('*', () => _onOperatorPressed('*')),
+              ],
+            ),
+            Row(
+              children: [
+                _calcButton('1', () => _onNumberPressed('1')),
+                _calcButton('2', () => _onNumberPressed('2')),
+                _calcButton('3', () => _onNumberPressed('3')),
+                _calcButton('-', () => _onOperatorPressed('-')),
+              ],
+            ),
+            Row(
+              children: [
+                _calcButton('0', () => _onNumberPressed('0')),
+                _calcButton('+', () => _onOperatorPressed('+')),
+                _calcButton('=', _onEquals),
+                _calcButton('C', _onClear),
+              ],
+            ),
+            const SizedBox(height: 24),
             Text(_buttonPressed ? 'Hello World!' : 'Please press the button below.'),
             const SizedBox(height: 16),
             ElevatedButton(
