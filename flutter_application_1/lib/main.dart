@@ -55,6 +55,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  bool _buttonPressed = false;
 
   void _incrementCounter() {
     setState(() {
@@ -104,6 +105,17 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: .center,
           children: [
+            Text(_buttonPressed ? 'Hello World!' : 'Please press the button below.'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _buttonPressed = true;
+                });
+              },
+              child: const Text('Press Me'),
+            ),
+            const SizedBox(height: 32),
             const Text('You have pushed the button this many times:'),
             Text(
               '$_counter',
