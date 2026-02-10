@@ -1,7 +1,7 @@
 
 # Flutter App
 
-A calculator developed in Flutter.
+A simple calculator developed in Flutter.
 
 ## Screenshot
 
